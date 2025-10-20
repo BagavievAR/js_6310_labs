@@ -1,14 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "KAI SteamPunk Theme",
+  "name": "KAI to DARK",
   "version": "1.0",
-  "description": "SteamPunk стиль для сайта kai.ru с металлическими текстурами и винтажными цветами",
+  "description": "Добавляет кнопку для переключения темного режима",
   "permissions": [
-    "storage"
+    "activeTab"
   ],
   "web_accessible_resources": [
     {
-      "resources": ["textures/*"],
+      "resources": ["fonts/*", "textures/*"],
       "matches": ["https://kai.ru/*"]
     }
   ],
