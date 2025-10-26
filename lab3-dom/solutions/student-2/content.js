@@ -25,16 +25,18 @@ function addSteamPunkMode() {
         //const menuBoxes = document.querySelectorAll('.menu-box, .search-box');
         const lists = document.querySelectorAll('.entry-links');
         const steamTexture = chrome.runtime.getURL('textures/steampunk.png');
+        //const copperTexture = chrome.runtime.getURL('textures/copper2.png');
+        const steamBackTexture = chrome.runtime.getURL('textures/background.png');
         const steamLogo = chrome.runtime.getURL('textures/kai-logo-steampunk.png');
         const steamLogoF = chrome.runtime.getURL('textures/logo_f_steampunk.png');
         const institutesBox = document.querySelectorAll('.institutes_box, .institutes_slider_box');
+        //let mainColor = 'rgba(133, 96, 69, 0)';
 
         
         if (pageWrapper) {
             
             if (isSteamPunkMode) {
                 // Возвращаем оригинальные стили
-                pageWrapper.style.backgroundColor = '';
                 footer.style.background = '';
 
                 mainSlider.style.background = '';
@@ -48,6 +50,7 @@ function addSteamPunkMode() {
                 newsBox.style.borderRadius = '';
                 newsBox.style.color = '';
                 newsBox.style.boxShadow = '';
+                newsBox.style.backgroundImage = '';
 
                 sections.forEach(section => {
                 section.style.backgroundColor = '';
@@ -73,25 +76,25 @@ function addSteamPunkMode() {
                 });
 
                 descItems.forEach(item => {
-                item.style.backgroundColor = '';
-                item.style.color = '';
+                    item.style.backgroundColor = '';
+                    item.style.color = '';
                 });
 
                 titles.forEach(title => {
-                title.style.color = '';
+                    title.style.color = '';
                 });
                 
                 navs.forEach(nav => {
-                nav.style.backgroundColor = '';
+                    nav.style.backgroundColor = '';
                 });
 
                 lists.forEach(list => {
-                list.style.backgroundColor = '';
+                    list.style.backgroundColor = '';
                 });
 
                 institutesBox.forEach(box => {
-                box.style.backgroundColor = '';
-                box.style.color = '';
+                    box.style.backgroundColor = '';
+                    box.style.color = '';
                 });
 
                 if (logo) {
@@ -108,6 +111,7 @@ function addSteamPunkMode() {
                     logoF.style.backgroundPosition = '';
                 }
                 
+                pageWrapper.style.backgroundColor = '';
                 pageWrapper.style.color = '';
                 pageWrapper.style.fontSize = '';
                 pageWrapper.style.backgroundImage = `url('')`;
@@ -117,79 +121,106 @@ function addSteamPunkMode() {
                 
             } else {
                 // Устанавливаем темный режим
+                /*
                 pageWrapper.style.backgroundColor = '#B8860B';
                 pageWrapper.style.color = '#6b4131';
                 pageWrapper.style.backgroundImage = `url('${steamTexture}')`;
                 pageWrapper.style.backgroundAttachment = 'fixed';
-                footer.style.background = '#a7793e';
+                */
+                pageWrapper.style.backgroundImage = `url('${steamTexture}')`;
+                pageWrapper.style.backgroundAttachment = 'fixed';
 
+                footer.style.background = 'rgba(133, 96, 69, 0.7)';
+
+                /*
                 mainSlider.style.background = 'linear-gradient(135deg, rgba(167, 121, 62, 0.85), rgba(21, 61, 82, 0.9))';
                 mainSlider.style.border = '3px ridge #d89841';
                 mainSlider.style.borderRadius = '8px';
                 mainSlider.style.color = '#e1c289';
                 mainSlider.style.boxShadow = '0 4px 20px rgba(216, 152, 65, 0.3)';
+                */
+                mainSlider.style.background = 'rgba(133, 96, 69, 0.5)';
+                //mainSlider.style.border = '3px ridge #d89841';
+                
 
-                newsBox.style.background = 'linear-gradient(135deg, rgba(178, 110, 65, 0.8), rgba(21, 61, 82, 0.85))';
-                newsBox.style.border = '2px ridge #ffbf6b';
-                newsBox.style.borderRadius = '6px';
+
+                //newsBox.style.backgroundColor = 'rgba(133, 96, 69, 0.6)';
+                newsBox.style.backgroundImage = `url('${steamBackTexture}')`;
+                //newsBox.style.border = '2px ridge #ffbf6b';
+                //newsBox.style.borderRadius = '6px';
                 newsBox.style.color = '#e1c289';
-                newsBox.style.boxShadow = '0 3px 15px rgba(255, 191, 107, 0.25)';
+                //newsBox.style.boxShadow = '0 3px 15px rgba(255, 191, 107, 0.25)';
 
                 sections.forEach(section => {
                 const hasParentWithBorder = section.closest('.section, .box, .portlet');
                 if (!hasParentWithBorder) {
-                    section.style.background = 'linear-gradient(135deg, rgba(133, 96, 69, 0.8), rgba(21, 61, 82, 0.9))';
-                    section.style.boxShadow = '0 2px 12px rgba(167, 121, 62, 0.2)';
+                    section.style.background = '';
+                    section.style.boxShadow = '';
+                    //Вообще ничего не меняет
                 } else {
                     // Для вложенных элементов - только фон, без границ
-                    section.style.background = 'rgba(133, 96, 69, 0.6)';
+                    // Вот это важно
+                    section.style.background = 'rgba(133, 96, 69, 0.4)';
                     section.style.border = 'none';
                 }
                 section.style.color = '#e1c289';
+                //Кое-какой текст
                 });
 
                 portlets.forEach(portlet => {
                     const isNested = portlet.closest('.portlet');
                     if (!isNested) {
-                        portlet.style.background = 'linear-gradient(135deg, rgba(99, 128, 106, 0.8), rgba(21, 61, 82, 0.85))';
-                        portlet.style.border = '2px ridge #63806a';
-                        portlet.style.borderRadius = '6px';
-                        portlet.style.boxShadow = 'inset 0 0 10px rgba(0, 0, 0, 0.3)';
+                        //portlet.style.background = 'linear-gradient(135deg, rgba(99, 128, 106, 0.8), rgba(21, 61, 82, 0.85))';
+                        //portlet.style.border = '2px ridge #63806a';
+                        //portlet.style.borderRadius = '6px';
+                        portlet.style.border = '';
+                        portlet.style.borderRadius = '';
+                        //portlet.style.boxShadow = 'inset 0 0 10px rgba(0, 0, 0, 0.3)';
                     } else {
                         // Вложенные портлеты - без границ
+                        // Ничего не меняет
                         portlet.style.background = 'rgba(99, 128, 106, 0.6)';
                         portlet.style.border = 'none';
                     }
-                    portlet.style.color = '#e1c289';
-                    portlet.style.padding = '12px';portlet.style.backgroundColor = '#808080';
-                    portlet.style.color = '#e0e0e0';
+                    //portlet.style.color = '#e1c289';
+                    //portlet.style.padding = '12px';
+                    portlet.style.padding = '';
+                    //portlet.style.backgroundColor = '#808080';
+                    portlet.style.backgroundColor = 'rgba(133, 96, 69, 0.4)';
+                    portlet.style.border = 'none';
+                    //portlet.style.color = '#e0e0e0';
+                    portlet.style.color = '';
                 });
 
                 descItems.forEach(item => {
-                item.style.backgroundColor = '#333';
-                item.style.color = '#e0e0e0';
+                    item.style.backgroundColor = 'rgba(21, 61, 82, 0.85)';
+                    item.style.color = '#e0e0e0';
                 });
 
                 for (let i = 0; i < 42; i++) {
-                descItems[i].style.backgroundColor = '';
-                descItems[i].style.color = '';
+                    descItems[i].style.backgroundColor = '';
+                    descItems[i].style.color = '';
                 }
 
                 titles.forEach(title => {
-                title.style.color = '#e0e0e0';
+                    title.style.color = '#e0e0e0';
                 });
 
                 navs.forEach(nav => {
-                nav.style.backgroundColor = '#808080';
+                    //СТРАТЕГИЧЕСКИЕ ПРОЕКТЫ УНИВЕРСИТЕТА по бокам
+                    nav.style.backgroundColor = 'rgba(133, 96, 69, 0)';
+                    
                 });
 
                 lists.forEach(list => {
-                list.style.backgroundColor = '#333';
+                    //Ничего не меняет
+                    list.style.backgroundColor = 'rgba(212, 0, 255, 1)';
                 });
 
                 institutesBox.forEach(box => {
-                box.style.backgroundColor = '#333';
-                box.style.color = '#e0e0e0';
+                    //Учебные подразделения
+                    box.style.backgroundColor = 'rgba(133, 96, 69, 0)';
+                    box.style.color = '#e0e0e0';
                 });
 
                 if (logo) {
