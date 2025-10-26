@@ -7,17 +7,24 @@ function addSteamPunkMode() {
     function toggleSteamPunkMode() {
         const pageWrapper = document.getElementById('page_wrapper');
         const mainSlider = document.querySelector('.main_slider_holder');
+        const spans = document.querySelectorAll('span');
+        const a = document.querySelectorAll('a');
+        const menus = document.querySelectorAll('.menu-list');
+        const buttons = document.querySelectorAll('.kai-btn-block, .next-arr, .prev-arr, .slick-disable, .kai-btn-block, .events_nav');
         const footer = document.querySelector('footer');
+        const header = document.querySelector('header');
         const newsBox = document.querySelector('.news_box');
         const logo = document.querySelector('div.logo_rus');
         const logoF = document.querySelector('a.logo');
         const sections = document.querySelectorAll('.section, .box, .research_box, .welcome_box, .contact_box');
-        const portlets = document.querySelectorAll('.portlet, .portlet-content, .portlet-body, .portlet-static, .portlet-journal-content');
-        const descItems = document.querySelectorAll('.desc, .item');
-        const titles = document.querySelectorAll('.t1, .title, .slogan');
-        //const forms = document.querySelectorAll('.form, .popup_form, .search_form, .fieldset');
+        const portletsOthers = document.querySelectorAll('.portlet-content, .portlet-body, .portlet-static, .portlet-journal-content'); //не меняет текст вообще!
+        const portlets = document.querySelectorAll('.portlet');
+        const desc = document.querySelectorAll('.desc');
+        const items = document.querySelectorAll('.item');
+        const titles = document.querySelectorAll('.t1, .title, .slogan, .text, .date');
+        const forms = document.querySelectorAll('.form, .popup_form, .search_form, .fieldset'); //не меняет текст вообще!
         //Окно поиска в футтере
-        //const inputs = document.querySelectorAll('.search_text, .input-container, .field, .controls');
+        const inputs = document.querySelectorAll('.search_text, .input-container, .field, .controls');//не меняет текст вообще!
         //Тоже окно поиска в футтере, но круче
         const navs = document.querySelectorAll('.nav, .tabs, .tab_items');
         //const activeElements = document.querySelectorAll('.active');
@@ -30,7 +37,18 @@ function addSteamPunkMode() {
         const steamLogo = chrome.runtime.getURL('textures/kai-logo-steampunk.png');
         const steamLogoF = chrome.runtime.getURL('textures/logo_f_steampunk.png');
         const institutesBox = document.querySelectorAll('.institutes_box, .institutes_slider_box');
-        //let mainColor = 'rgba(133, 96, 69, 0)';
+        const nextBtn = document.querySelector('.inst-slide.next');
+        const prevBtn = document.querySelector('.inst-slide.prev');
+        const fontUrl = chrome.runtime.getURL('fonts/kurobara-gothic-regular.ttf');
+        const kurobaraFont = new FontFace('Kurobara Gothic', `url(${fontUrl}) format('truetype')`);
+        let mainColor = 'rgba(133, 96, 69, 0.6)';
+        let sideColor = 'rgba(21, 61, 82, 0.7)';
+        let textColor = '#ffffffff';
+
+        kurobaraFont.load().then(loadedFace => {
+            document.fonts.add(loadedFace);
+            console.log('✅ Шрифт Kurobara Gothic загружен');
+        }).catch(err => console.error('Ошибка загрузки шрифта:', err));
 
         
         if (pageWrapper) {
@@ -38,58 +56,81 @@ function addSteamPunkMode() {
             if (isSteamPunkMode) {
                 // Возвращаем оригинальные стили
                 footer.style.background = '';
+                footer.style.color = '';
+                header.style.background = '';
+                header.style.color = '';
+
+                nextBtn.style.backgroundColor = '';
+                prevBtn.style.backgroundColor = '';
 
                 mainSlider.style.background = '';
-                mainSlider.style.border = '';
-                mainSlider.style.borderRadius = '';
                 mainSlider.style.color = '';
-                mainSlider.style.boxShadow = '';
                 
-                newsBox.style.background = '';
-                newsBox.style.border = '';
-                newsBox.style.borderRadius = '';
                 newsBox.style.color = '';
-                newsBox.style.boxShadow = '';
                 newsBox.style.backgroundImage = '';
 
                 sections.forEach(section => {
-                section.style.backgroundColor = '';
                 section.style.color = '';
+                section.style.fontFamily = '';
                 });
 
+                forms.forEach(form => {
+                    form.style.color = '';
+                })
+
+                inputs.forEach(input => {
+                    input.style.color = '';
+                })
+
                 portlets.forEach(portlet => {
-                    const isNested = portlet.closest('.portlet');
-                    if (!isNested) {
-                        portlet.style.background = '';
-                        portlet.style.border = '';
-                        portlet.style.borderRadius = '';
-                        portlet.style.boxShadow = '';
-                    } else {
-                        // Вложенные портлеты - без границ
-                        portlet.style.background = '';
-                        portlet.style.border = '';
-                    }
-                    portlet.style.color = '';
-                    portlet.style.padding = '';
                     portlet.style.backgroundColor = '';
                     portlet.style.color = '';
                 });
 
-                descItems.forEach(item => {
+                portletsOthers.forEach(portlet => {
+                    portlet.style.color = '';
+                });
+
+                spans.forEach(span => {
+                    span.style.color = '';
+                    span.style.fontFamily = '';
+                });
+
+                a.forEach(text => {
+                    text.style.color = '';
+                    text.style.fontFamily = '';
+                });
+
+                menus.forEach(menu => {
+                    menu.style.background = '';
+                })
+
+                buttons.forEach(button => {
+                    button.style.background = '';
+                })
+
+                desc.forEach(item => {
+                    item.style.backgroundColor = '';
+                    item.style.color = '';
+                });
+
+                items.forEach(item => {
                     item.style.backgroundColor = '';
                     item.style.color = '';
                 });
 
                 titles.forEach(title => {
                     title.style.color = '';
+                    title.style.fontFamily = '';
                 });
                 
                 navs.forEach(nav => {
                     nav.style.backgroundColor = '';
+                    nav.style.color = '';
                 });
 
                 lists.forEach(list => {
-                    list.style.backgroundColor = '';
+                    list.style.color = '';
                 });
 
                 institutesBox.forEach(box => {
@@ -111,116 +152,132 @@ function addSteamPunkMode() {
                     logoF.style.backgroundPosition = '';
                 }
                 
-                pageWrapper.style.backgroundColor = '';
-                pageWrapper.style.color = '';
-                pageWrapper.style.fontSize = '';
-                pageWrapper.style.backgroundImage = `url('')`;
-                pageWrapper.style.backgroundAttachment = '';
                 pageWrapper.classList.remove('steampunk-active');
+                pageWrapper.style.color = '';
+
+                document.documentElement.style.background = '';
+                document.documentElement.style.backgroundAttachment = '';
+                document.documentElement.style.backgroundSize = '';
+                document.documentElement.style.backgroundRepeat = '';
+                document.documentElement.style.backgroundPosition = '';
+                document.body.style.background = '';
                 
                 
             } else {
-                // Устанавливаем темный режим
-                /*
-                pageWrapper.style.backgroundColor = '#B8860B';
-                pageWrapper.style.color = '#6b4131';
-                pageWrapper.style.backgroundImage = `url('${steamTexture}')`;
-                pageWrapper.style.backgroundAttachment = 'fixed';
-                */
-                pageWrapper.style.backgroundImage = `url('${steamTexture}')`;
-                pageWrapper.style.backgroundAttachment = 'fixed';
+                document.documentElement.style.background = `url('${steamTexture}')`;
+                document.documentElement.style.backgroundAttachment = 'fixed';
+                //document.documentElement.style.backgroundSize = 'cover';
+                //document.documentElement.style.backgroundRepeat = 'no-repeat';
+                document.documentElement.style.backgroundPosition = 'center center';
+                document.body.style.background = 'transparent';
 
-                footer.style.background = 'rgba(133, 96, 69, 0.7)';
-
-                /*
-                mainSlider.style.background = 'linear-gradient(135deg, rgba(167, 121, 62, 0.85), rgba(21, 61, 82, 0.9))';
-                mainSlider.style.border = '3px ridge #d89841';
-                mainSlider.style.borderRadius = '8px';
-                mainSlider.style.color = '#e1c289';
-                mainSlider.style.boxShadow = '0 4px 20px rgba(216, 152, 65, 0.3)';
-                */
-                mainSlider.style.background = 'rgba(133, 96, 69, 0.5)';
-                //mainSlider.style.border = '3px ridge #d89841';
+                footer.style.background = mainColor;
+                footer.style.color = textColor;
                 
+                header.style.background = mainColor;
+                header.style.color = textColor;
 
+                nextBtn.style.backgroundColor = sideColor;
+                prevBtn.style.backgroundColor = sideColor;
 
-                //newsBox.style.backgroundColor = 'rgba(133, 96, 69, 0.6)';
+                mainSlider.style.background = 'rgba(133, 96, 69, 0)';
+                mainSlider.style.color = textColor;
+                
                 newsBox.style.backgroundImage = `url('${steamBackTexture}')`;
-                //newsBox.style.border = '2px ridge #ffbf6b';
-                //newsBox.style.borderRadius = '6px';
-                newsBox.style.color = '#e1c289';
-                //newsBox.style.boxShadow = '0 3px 15px rgba(255, 191, 107, 0.25)';
+                newsBox.style.color = textColor;
 
                 sections.forEach(section => {
-                const hasParentWithBorder = section.closest('.section, .box, .portlet');
-                if (!hasParentWithBorder) {
-                    section.style.background = '';
-                    section.style.boxShadow = '';
-                    //Вообще ничего не меняет
-                } else {
-                    // Для вложенных элементов - только фон, без границ
-                    // Вот это важно
-                    section.style.background = 'rgba(133, 96, 69, 0.4)';
-                    section.style.border = 'none';
-                }
-                section.style.color = '#e1c289';
+                section.style.color = textColor;
+                section.style.fontFamily = '"Kurobara Gothic", sans-serif';
                 //Кое-какой текст
                 });
 
+                forms.forEach(form => {
+                    form.style.color = textColor;
+                })
+
+                inputs.forEach(input => {
+                    input.style.color = textColor;
+                })
+
                 portlets.forEach(portlet => {
-                    const isNested = portlet.closest('.portlet');
-                    if (!isNested) {
-                        //portlet.style.background = 'linear-gradient(135deg, rgba(99, 128, 106, 0.8), rgba(21, 61, 82, 0.85))';
-                        //portlet.style.border = '2px ridge #63806a';
-                        //portlet.style.borderRadius = '6px';
-                        portlet.style.border = '';
-                        portlet.style.borderRadius = '';
-                        //portlet.style.boxShadow = 'inset 0 0 10px rgba(0, 0, 0, 0.3)';
-                    } else {
-                        // Вложенные портлеты - без границ
-                        // Ничего не меняет
-                        portlet.style.background = 'rgba(99, 128, 106, 0.6)';
-                        portlet.style.border = 'none';
-                    }
-                    //portlet.style.color = '#e1c289';
-                    //portlet.style.padding = '12px';
-                    portlet.style.padding = '';
-                    //portlet.style.backgroundColor = '#808080';
-                    portlet.style.backgroundColor = 'rgba(133, 96, 69, 0.4)';
-                    portlet.style.border = 'none';
-                    //portlet.style.color = '#e0e0e0';
-                    portlet.style.color = '';
+                    portlet.style.background = mainColor;
+                    portlet.style.color = textColor;
+                    //Делает мейнслайдер и все кроме футера и верхнего блока
                 });
 
-                descItems.forEach(item => {
-                    item.style.backgroundColor = 'rgba(21, 61, 82, 0.85)';
-                    item.style.color = '#e0e0e0';
+                portletsOthers.forEach(portlet => {
+                    portlet.style.color = textColor;
                 });
 
-                for (let i = 0; i < 42; i++) {
-                    descItems[i].style.backgroundColor = '';
-                    descItems[i].style.color = '';
+                spans.forEach(span => {
+                    span.style.color = textColor;
+                    span.style.fontFamily = '"Kurobara Gothic", sans-serif';
+                });
+
+                a.forEach(text => {
+                    text.style.color = textColor;
+                    text.style.fontFamily = '"Kurobara Gothic", sans-serif';
+                });
+
+                menus.forEach(menu => {
+                    menu.style.background = sideColor;
+                })
+
+                buttons.forEach(button => {
+                    button.style.background = sideColor;
+                })
+
+                desc.forEach(item => {
+                    item.style.backgroundColor = sideColor;
+                    item.style.color = textColor;
+                });
+                
+                for (let i = 0; i < 21; i++) {
+                    desc[i].style.backgroundColor = '';
+                    desc[i].style.color = '';
+                }
+                /*
+                for (let i = 21; i < 34; i++) {
+                    desc[i].style.backgroundColor = 'rgba(195, 0, 255, 1)';
+                    desc[i].style.color = '';
+                }
+                */
+                for (let i = 34; i < 61; i++) {
+                    desc[i].style.backgroundColor = 'rgba(2, 255, 23, 0)';
+                }
+
+                items.forEach(item => {
+                    item.style.backgroundColor = sideColor;
+                    item.style.color = textColor;
+                });
+
+                for (let i = 34; i < 61; i++) {
+                    items[i].style.backgroundColor = 'rgba(0, 255, 64, 0)';
+                    items[i].style.color = '';
                 }
 
                 titles.forEach(title => {
-                    title.style.color = '#e0e0e0';
+                    title.style.color = textColor;
+                    title.style.fontFamily = '"Kurobara Gothic", sans-serif';
                 });
 
                 navs.forEach(nav => {
                     //СТРАТЕГИЧЕСКИЕ ПРОЕКТЫ УНИВЕРСИТЕТА по бокам
+                    //Не нужно, если делаю portlet
                     nav.style.backgroundColor = 'rgba(133, 96, 69, 0)';
-                    
+                    nav.style.color = textColor;
                 });
 
                 lists.forEach(list => {
-                    //Ничего не меняет
-                    list.style.backgroundColor = 'rgba(212, 0, 255, 1)';
+                    list.style.color = textColor;
                 });
 
                 institutesBox.forEach(box => {
                     //Учебные подразделения
                     box.style.backgroundColor = 'rgba(133, 96, 69, 0)';
-                    box.style.color = '#e0e0e0';
+                    //Не нужно, если делаю portlet
+                    box.style.color = textColor;
                 });
 
                 if (logo) {
@@ -237,6 +294,7 @@ function addSteamPunkMode() {
                     logoF.style.backgroundPosition = 'center 50%';
                 }
 
+                pageWrapper.style.color = textColor;
                 pageWrapper.classList.add('steampunk-active');
             }
 
