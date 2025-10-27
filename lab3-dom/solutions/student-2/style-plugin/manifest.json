@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "KAI to STEAMPUNK",
+  "name": "SteamPunk KAI",
   "version": "1.0",
-  "description": "Добавляет кнопку для переключения темного режима",
+  "description": "Добавляет кнопку для переключения STEAMPUNK режима",
   "permissions": [
     "activeTab"
   ],
