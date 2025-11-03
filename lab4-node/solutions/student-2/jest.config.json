@@ -1,0 +1,16 @@
+{
+  "bail": 1,
+  "verbose": false,
+  "testEnvironment": "node",
+  "collectCoverage": true,
+  "collectCoverageFrom": ["src/utils/**/*.{js,mjs}", "!src/utils/index.js"],
+  "coverageDirectory": "coverage",
+  "coverageThreshold": {
+    "global": {
+      "branches": 70,
+      "functions": 70,
+      "lines": 70,
+      "statements": 70
+    }
+  }
+}
