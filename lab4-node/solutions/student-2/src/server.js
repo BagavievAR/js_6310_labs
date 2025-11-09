@@ -1,63 +1,31 @@
 import TelegramBot from "node-telegram-bot-api";
 import dotenv from "dotenv";
-import { renderEmptyField, randomTetromino, RULES_TEXT } from "./utils/index.js";
+import { renderEmptyField, randomTetromino, RULES_TEXT, HELP_TEXT } from "./utils/index.js";
+import {
+  validateRows,
+  validateCols,
+  explainLimits,
+  buildFieldOrError,
+} from "./utils/fsm.js";
 
 const stateMap = new Map();
-
-const STATE = {
-  IDLE: "IDLE",
-  AWAIT_ROWS: "AWAIT_ROWS",
-  AWAIT_COLS: "AWAIT_COLS",
-};
-
+const STATE = { IDLE: "IDLE", AWAIT_ROWS: "AWAIT_ROWS", AWAIT_COLS: "AWAIT_COLS" };
 const MAX_ROWS = 50;
 const MAX_COLS = 50;
 
-function getState(chatId) {
-  return stateMap.get(chatId) ?? { step: STATE.IDLE, startedAt: 0 };
-}
-function setState(chatId, next) {
-  stateMap.set(chatId, { ...getState(chatId), ...next });
-}
-function clearState(chatId) {
-  stateMap.delete(chatId);
-}
-
-function isIntInRange(text, min, max) {
-  if (typeof text !== "string") return false;
-  const n = Number(text.trim());
-  return Number.isInteger(n) && n >= min && n <= max;
-}
-
-function explainLimits() {
-  return `Введите целое число:
-• Строк: 1..${MAX_ROWS}
-• Столбцов: 1..${MAX_COLS}`;
-}
+function getState(chatId) { return stateMap.get(chatId) ?? { step: STATE.IDLE, startedAt: 0 }; }
+function setState(chatId, next) { stateMap.set(chatId, { ...getState(chatId), ...next }); }
+function clearState(chatId) { stateMap.delete(chatId); }
 
 export default function runServer() {
   dotenv.config();
   const token = process.env.TELEGRAM_BOT_TOKEN;
-  if (!token) {
-    console.error("TELEGRAM_BOT_TOKEN is missing in .env");
-    process.exit(1);
-  }
+  if (!token) { console.error("TELEGRAM_BOT_TOKEN is missing in .env"); process.exit(1); }
 
   const bot = new TelegramBot(token, { polling: true });
 
   bot.onText(/^\/help$/, (msg) => {
-    bot.sendMessage(
-      msg.chat.id,
-      [
-        "Команды:",
-        "/rules — правила",
-        "/field — пустое поле 20×10",
-        "/next_tetramino — случайная фигура",
-        "/custom_field — пошаговое создание поля (FSM)",
-        "/cancel — отменить пошаговую операцию",
-      ].join("\n"),
-      { disable_web_page_preview: true }
-    );
+    bot.sendMessage(msg.chat.id, HELP_TEXT, { disable_web_page_preview: true });
   });
 
   bot.onText(/^\/rules$/, (msg) => {
@@ -81,7 +49,7 @@ export default function runServer() {
   bot.onText(/^\/custom_field$/, (msg) => {
     const chatId = msg.chat.id;
     setState(chatId, { step: STATE.AWAIT_ROWS, rows: undefined, startedAt: Date.now() });
-    bot.sendMessage(chatId, `Шаг 1/2. Введите количество строк.\n${explainLimits()}`);
+    bot.sendMessage(chatId, `Шаг 1/2. Введите количество строк.\n${explainLimits(MAX_ROWS, MAX_COLS)}`);
   });
 
   bot.onText(/^\/cancel$/, (msg) => {
@@ -111,42 +79,28 @@ export default function runServer() {
 
     switch (state.step) {
     case STATE.AWAIT_ROWS: {
-      if (!isIntInRange(text, 1, MAX_ROWS)) {
-        bot.sendMessage(chatId, `Некорректное значение строк. ${explainLimits()}`);
-        return;
-      }
-      const rows = Number(text);
-      setState(chatId, { step: STATE.AWAIT_COLS, rows });
-      bot.sendMessage(chatId, `Шаг 2/2. Введите количество столбцов.\n${explainLimits()}`);
+      const r = validateRows(text, MAX_ROWS);
+      if (!r.ok) { bot.sendMessage(chatId, `${r.error}. ${explainLimits(MAX_ROWS, MAX_COLS)}`); return; }
+      setState(chatId, { step: STATE.AWAIT_COLS, rows: r.value });
+      bot.sendMessage(chatId, `Шаг 2/2. Введите количество столбцов.\n${explainLimits(MAX_ROWS, MAX_COLS)}`);
       return;
     }
 
     case STATE.AWAIT_COLS: {
-      if (!isIntInRange(text, 1, MAX_COLS)) {
-        bot.sendMessage(chatId, `Некорректное значение столбцов. ${explainLimits()}`);
-        return;
-      }
-      const cols = Number(text);
+      const v = validateCols(text, MAX_COLS);
+      if (!v.ok) { bot.sendMessage(chatId, `${v.error}. ${explainLimits(MAX_ROWS, MAX_COLS)}`); return; }
       const rows = getState(chatId).rows ?? 20;
-
-      try {
-        const field = renderEmptyField(rows, cols);
-        bot.sendMessage(chatId, `\`\`\`\n${field}\n\`\`\``, { parse_mode: "MarkdownV2" });
-        clearState(chatId);
-      } catch (e) {
-        bot.sendMessage(chatId, `Ошибка: ${e.message ?? "не удалось построить поле"}`);
-      }
+      const res = buildFieldOrError(rows, v.value, renderEmptyField);
+      if (!res.ok) { bot.sendMessage(chatId, `Ошибка: ${res.error}`); return; }
+      bot.sendMessage(chatId, `\`\`\`\n${res.field}\n\`\`\``, { parse_mode: "MarkdownV2" });
+      clearState(chatId);
       return;
     }
 
     case STATE.IDLE:
-    default: {
-      bot.sendMessage(
-        chatId,
-        "Команды: /rules, /field, /next_tetramino, /custom_field, /help, /cancel"
-      );
+    default:
+      bot.sendMessage(chatId, "Команды: /rules, /field, /next_tetramino, /custom_field, /help, /cancel");
       return;
-    }
     }
   });
 
